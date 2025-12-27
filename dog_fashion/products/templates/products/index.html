@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="hero-container">
+    <section class="hero-slider swiper mySwiper">
+        <div class="swiper-wrapper">
+            
+            <div class="swiper-slide position-relative">
+                <img src="{% static 'img/big1.jpeg' %}" 
+                     class="d-block w-100 h-100 object-fit-cover" 
+                     alt="Dog 1"
+                     style="display: block !important; visibility: visible !important; opacity: 1 !important;">
+                
+                <div class="hero-text-wrapper">
+                    <div class="hero-text hero-text-animated">
+                        <p class="hero-eyebrow">Made with love</p>
+                        <h1 class="hero-title">Dog Fashion<br>Collection</h1>
+                        <a href="#" class="hero-link">Discover</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="swiper-slide position-relative">
+                <img src="{% static 'img/big2.jpeg' %}" 
+                     class="d-block w-100 h-100 object-fit-cover" 
+                     alt="Dog 2"
+                     style="display: block !important; visibility: visible !important; opacity: 1 !important;">
+                 
+                 <div class="hero-text-wrapper hero-right">
+                     <div class="hero-text hero-text-animated">
+                        <p class="hero-eyebrow">Winter Season</p>
+                        <h1 class="hero-title">Stylish<br>Warmth</h1>
+                        <a href="#" class="hero-link">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </section>
+</div>
+
+
+<section class="py-5 overflow-hidden bg-white">
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <span>Dog Fashion</span><span>Collection</span><span>New Arrivals</span><span>Stylish</span><span>Comfort</span>
+            <span>Dog Fashion</span><span>Collection</span><span>New Arrivals</span><span>Stylish</span><span>Comfort</span>
+        </div>
+    </div>
+    <div class="marquee-container mt-2" style="border-top: none;">
+        <div class="marquee-content reverse" style="animation-duration: 25s;">
+             <span>Accessories</span><span>Raincoats</span><span>Sweaters</span><span>Leashes</span><span>Toys</span>
+             <span>Accessories</span><span>Raincoats</span><span>Sweaters</span><span>Leashes</span><span>Toys</span>
+        </div>
+    </div>
+</section>
+
+
+<section class="container py-5 my-5">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <h2 class="display-5" style="font-family: 'Playfair Display', serif;">Новинки</h2>
+        <div class="d-flex gap-2">
+             <button class="btn btn-outline-dark rounded-circle product-prev" style="width: 50px; height: 50px;">&larr;</button>
+             <button class="btn btn-outline-dark rounded-circle product-next" style="width: 50px; height: 50px;">&rarr;</button>
+        </div>
+    </div>
+    
+    <div class="swiper productSwiper" style="overflow: hidden;">
+        <div class="swiper-wrapper">
+            {% for product in products %}
+            <div class="swiper-slide">
+                <div class="product-card">
+                    <div class="bg-light mb-3 position-relative overflow-hidden" style="padding-top: 130%;">
+                        <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none stretched-link">
+                            {% if product.images.all %}
+                                {% with first_image=product.images.all|first %}
+                                    <img src="{{ first_image.image.url }}" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ product.name }}" loading="lazy">
+                                {% endwith %}
+                            {% else %}
+                                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-light">No Image</div>
+                            {% endif %}
+                            <span class="badge-new">NEW</span>
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="font-primary fw-light text-uppercase text-dark" style="font-size: 1rem;">{{ product.name }}</h5>
+                        <span class="text-muted">{{ product.price }} ₽</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            
+            <div class="swiper-slide">
+                <div class="product-card">
+                    <div class="bg-light mb-3 position-relative overflow-hidden" style="padding-top: 130%;">
+                        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                             class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" 
+                             alt="Product">
+                             <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="font-primary fw-light" style="font-size: 1rem;">Дождевик Yellow</h5>
+                        <span class="text-muted">2 500 ₽</span>
+                    </div>
+                </div>
+            </div>
+             <div class="swiper-slide">
+                <div class="product-card">
+                    <div class="bg-light mb-3 position-relative overflow-hidden" style="padding-top: 130%;">
+                        <img src="https://images.unsplash.com/photo-1591946614720-90a587da4a36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" 
+                             class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" 
+                             alt="Product">
+                             <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="font-primary fw-light" style="font-size: 1rem;">Свитер Red</h5>
+                        <span class="text-muted">1 800 ₽</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<div class="custom-scroll-section">
+    
+    <div class="scroll-text-side">
+        <div class="sticky-text">
+            <p class="text-uppercase text-muted mb-2" style="letter-spacing: 2px; font-size: 0.8rem;">Philosophy</p>
+            <h2 class="display-4 mb-4" style="font-family: 'Playfair Display', serif;">Сотни собак<br>счастливы</h2>
+            <p class="text-muted mb-4" style="line-height: 1.8;">
+                Мы верим, что каждая собака заслуживает комфорта. Наши материалы проходят строгий отбор, 
+                чтобы обеспечить тепло даже в самые холодные дни. Посмотрите, как счастлив этот пес 
+                в нашей новой коллекции.
+            </p>
+        </div>
+    </div>
+    
+    <div class="scroll-image-side">
+        <div class="sliding-image-wrapper">
+            
+            <img src="{% static 'img/1.jpg' %}" 
+                 id="slideImage1"
+                 class="sliding-image" 
+                 style="transform: translateX(100%); display: block !important; visibility: visible !important; opacity: 1 !important;"
+                 alt="Happy Dog">
+        </div>
+    </div>
+</div>
+
+
+<div class="custom-scroll-section reverse">
+    
+    <div class="scroll-text-side">
+        <div class="sticky-text">
+            <p class="text-uppercase text-muted mb-2" style="letter-spacing: 2px; font-size: 0.8rem;">Comfort</p>
+            <h2 class="display-4 mb-4" style="font-family: 'Playfair Display', serif;">Свобода<br>движений</h2>
+            <p class="text-muted mb-4" style="line-height: 1.8;">
+                Никаких сковывающих резинок. Только анатомический крой, повторяющий движения вашего питомца.
+                Идеально для активных прогулок в парке или лесу.
+            </p>
+        </div>
+    </div>
+    
+    <div class="scroll-image-side">
+        <div class="sliding-image-wrapper">
+            
+            <img src="{% static 'img/2.jpg' %}" 
+                 id="slideImage2"
+                 class="sliding-image" 
+                 style="transform: translateX(-100%); display: block !important; visibility: visible !important; opacity: 1 !important;"
+                 alt="Active Dog">
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 1. Hero Slider
+    var swiper = new Swiper(".mySwiper", {
+        loop: true,
+        speed: 800, 
+        effect: 'slide', 
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+    });
+
+    // 2. Product Slider - строго 2 карточки
+    var productSwiper = new Swiper(".productSwiper", {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        loop: true,
+        watchOverflow: true,
+        navigation: {
+            nextEl: ".product-next",
+            prevEl: ".product-prev",
+        },
+        breakpoints: {
+            0: { slidesPerView: 2, spaceBetween: 15 }, 
+            640: { slidesPerView: 2, spaceBetween: 20 }, 
+            768: { slidesPerView: 2, spaceBetween: 30 },
+            1024: { slidesPerView: 2, spaceBetween: 40 },
+        }
+    });
+
+    // Check if images loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.hero-slider img, .sliding-image');
+        images.forEach(function(img) {
+            img.onerror = function() {
+                console.error('Image failed to load:', this.src);
+                this.style.display = 'none';
+            };
+            img.onload = function() {
+                console.log('Image loaded:', this.src);
+            };
+        });
+    });
+
+    // 3. Scroll Animation Logic
+    document.addEventListener('scroll', function() {
+        const windowHeight = window.innerHeight;
+        
+        function handleScroll(imgId, direction) {
+            const img = document.getElementById(imgId);
+            const section = img.closest('.custom-scroll-section');
+            const rect = section.getBoundingClientRect();
+            
+            // Calculate progress based on section position relative to viewport
+            let progress = (windowHeight - rect.top) / (windowHeight * 0.8);
+            progress = Math.min(Math.max(progress, 0), 1);
+            
+            if (img.dataset.locked === "true") return;
+            
+            if (progress >= 0.95) { 
+                img.dataset.locked = "true"; 
+                img.style.transform = `translateX(0%)`;
+                return;
+            }
+            
+            let translateVal;
+            if (direction === 'left-to-right') {
+                translateVal = -100 + (progress * 100);
+                if (translateVal > 0) translateVal = 0;
+            } else {
+                translateVal = 100 - (progress * 100);
+                if (translateVal < 0) translateVal = 0;
+            }
+            
+            img.style.transform = `translateX(${translateVal}%)`;
+        }
+
+        handleScroll('slideImage1', 'right-to-left');
+        handleScroll('slideImage2', 'left-to-right');
+    });
+</script>
+{% endblock %}
+
+
+

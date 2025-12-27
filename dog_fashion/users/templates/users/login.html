@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Вход - Dog Fashion{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px; margin-bottom: 80px; padding-top: 40px;">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger small">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Пароль</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="text-danger small">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <a href="{% url 'users:password_reset' %}" class="text-decoration-none">Забыли пароль?</a>
+                </div>
+
+                <button type="submit" class="btn btn-dark rounded-0 w-100 mb-3">Войти</button>
+            </form>
+
+            <div class="text-center mb-3">
+                <p class="text-muted">или</p>
+                <button type="button" class="btn btn-outline-dark rounded-0 w-100" onclick="showGoogleMessage()">
+                    <i class="fab fa-google me-2"></i>Войти через Google
+                </button>
+            </div>
+            
+            <script>
+                function showGoogleMessage() {
+                    alert('В данный момент вход через Google недоступен в вашем регионе. Пожалуйста, зарегистрируйтесь по почте.');
+                }
+            </script>
+
+            <div class="text-center">
+                <p class="mb-0">Нет аккаунта? <a href="{% url 'users:register' %}" class="text-decoration-none">Зарегистрироваться</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

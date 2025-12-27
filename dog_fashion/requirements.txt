@@ -1,0 +1,9 @@
+Django>=4.2,<5.0
+djangorestframework
+psycopg2-binary
+Pillow
+stripe
+django-filter
+redis
+celery
+

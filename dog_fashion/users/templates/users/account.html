@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Мой аккаунт - Dog Fashion{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px; margin-bottom: 80px; padding-top: 40px;">
+    <div class="row">
+        <div class="col-md-12">
+            
+            <div class="mb-4">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <a href="{% url 'users:logout' %}" class="btn btn-outline-dark rounded-0">Выйти</a>
+            </div>
+
+            <hr class="my-4">
+            
+            {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Номер заказа</th>
+                                <th>Дата</th>
+                                <th>Товары</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.created|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    <ul class="list-unstyled mb-0">
+                                        {% for item in order.items.all %}
+                                        <li>
+                                            {{ item.product.name }} 
+                                            {% if item.size %}(Размер: {{ item.size }}){% endif %}
+                                            - {{ item.quantity }} шт.
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>{{ order.get_total_cost|floatformat:2 }} ₽</td>
+                                <td>
+                                    {% if order.paid %}
+                                        <span class="badge bg-success">Оплачен</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Не оплачен</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p class="mb-0">У вас пока нет заказов.</p>
+                </div>
+                <a href="{% url 'products:index' %}" class="btn btn-dark rounded-0">Перейти в магазин</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

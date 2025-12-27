@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 80px;">
+    
+    
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        
+        <div>
+            <a href="{% url 'products:index' %}" class="text-dark text-decoration-none text-uppercase small fw-bold">
+                <i class="fa-solid fa-arrow-left me-2"></i> Home
+            </a>
+        </div>
+        
+        
+        <h1 class="text-uppercase fw-bold m-0" style="font-family: 'Playfair Display', serif;">
+            {% if category %}{{ category.name }}{% else %}All Products{% endif %}
+        </h1>
+        
+        
+        <div class="dropdown">
+             <button class="btn btn-link text-dark text-decoration-none text-uppercase small fw-bold p-0 dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                Filter
+             </button>
+             <div class="dropdown-menu dropdown-menu-end border-0 shadow-lg filter-dropdown-menu" aria-labelledby="filterDropdown">
+                <form method="get" id="filter-form">
+                    
+                    <div class="mb-4">
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="sort" value="price_desc" id="sort_desc" autocomplete="off" 
+                                   {% if sort_by == 'price_desc' %}checked{% endif %}>
+                            <label class="btn btn-outline-dark btn-sm rounded-0" for="sort_desc">
+                                <i class="fa-solid fa-arrow-down-short-wide me-1"></i> Дороже
+                            </label>
+
+                            <input type="radio" class="btn-check" name="sort" value="price_asc" id="sort_asc" autocomplete="off" 
+                                   {% if sort_by == 'price_asc' %}checked{% endif %}>
+                            <label class="btn btn-outline-dark btn-sm rounded-0" for="sort_asc">
+                                <i class="fa-solid fa-arrow-up-short-wide me-1"></i> Дешевле
+                            </label>
+                        </div>
+                    </div>
+
+                    
+                    {% if available_sizes %}
+                    <div class="mb-4">
+                        <span class="filter-label">Размер:</span>
+                        <div class="d-flex flex-wrap">
+                            {% for size in available_sizes %}
+                            <div class="size-checkbox-wrapper">
+                                <input class="size-checkbox-input" type="checkbox" name="size" value="{{ size }}" id="size_dd_{{ size }}" 
+                                       {% if size in selected_sizes %}checked{% endif %}>
+                                <label class="size-checkbox-label" for="size_dd_{{ size }}">
+                                    {{ size }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    
+                    <div class="text-center pt-3 border-top">
+                        <a href="{{ request.path }}" class="reset-filter-link">Сбросить фильтры</a>
+                    </div>
+                </form>
+             </div>
+        </div>
+    </div>
+
+    
+
+    
+    <div class="row g-4" id="product-grid">
+        
+        <div class="col-6 col-md-3">
+            <div class="h-100 w-100 position-relative overflow-hidden" style="min-height: 350px; background-color: #f4f4f4;">
+                <img src="https://images.unsplash.com/photo-1516476739410-5693cb98328a?q=80&w=1974&auto=format&fit=crop" 
+                     class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" 
+                     style="opacity: 0.9;"
+                     alt="Aesthetic">
+                <div class="position-absolute bottom-0 start-0 p-4 text-white">
+                    <h4 style="font-family: 'Playfair Display', serif;">Estetica</h4>
+                    <p class="small mb-0">Pure beauty</p>
+                </div>
+            </div>
+        </div>
+
+        {% for product in products %}
+        <div class="col-6 col-md-3">
+            <div class="product-card h-100 d-flex flex-column">
+                
+                <div class="bg-light mb-3 position-relative overflow-hidden" style="padding-top: 125%;">
+                    <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none stretched-link">
+                        {% if product.is_new %}
+                            <div class="badge-new">New</div>
+                        {% endif %}
+                        
+                        {% if product.images.exists %}
+                            <img src="{{ product.images.first.image.url }}" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="{{ product.name }}">
+                        {% else %}
+                             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-light">No Image</div>
+                        {% endif %}
+                    </a>
+                    
+                    
+                    
+                </div>
+                
+                
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="font-primary text-uppercase mb-0" style="font-size: 0.9rem; letter-spacing: 0.5px;">{{ product.name }}</h6>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small d-block">Prezzo di listino</span>
+                            <span class="fw-bold">{{ product.price }} ₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">No products found in this category.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('filter-form');
+    const grid = document.getElementById('product-grid');
+    const resetLink = document.querySelector('.reset-filter-link');
+    
+    // State for sort (initialized from server rendering or URL)
+    let currentSort = new URLSearchParams(window.location.search).get('sort') || '';
+
+    // Function to fetch and update
+    function updateCatalog(url) {
+        // Optional: Show loading state (e.g. opacity)
+        grid.style.opacity = '0.5';
+        
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newGrid = doc.getElementById('product-grid');
+            
+            if (newGrid) {
+                grid.innerHTML = newGrid.innerHTML;
+            }
+            
+            // Update URL
+            window.history.pushState({}, '', url);
+            
+            // Restore opacity
+            grid.style.opacity = '1';
+        })
+        .catch(err => {
+            console.error('Filter error:', err);
+            grid.style.opacity = '1';
+        });
+    }
+
+    // Handle Size Changes (Checkboxes)
+    form.addEventListener('change', function(e) {
+        if (e.target.classList.contains('size-checkbox-input')) {
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            // Remove sort if it's not valid or not in radios?
+            // FormData includes checked radios, so 'sort' will be correct if a radio is checked.
+            
+            updateCatalog(`${window.location.pathname}?${params.toString()}`);
+        }
+    });
+
+    // Handle Sort Clicks (Radios)
+    const sortRadios = form.querySelectorAll('input[name="sort"]');
+    sortRadios.forEach(radio => {
+        radio.addEventListener('click', function(e) {
+            // Check if we are clicking the active sort
+            if (this.value === currentSort) {
+                // Deselect
+                this.checked = false;
+                currentSort = '';
+            } else {
+                // Select
+                currentSort = this.value;
+            }
+            
+            // Update form data based on current DOM state
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            updateCatalog(`${window.location.pathname}?${params.toString()}`);
+        });
+    });
+
+    // Handle Reset
+    if (resetLink) {
+        resetLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear form
+            form.reset();
+            currentSort = '';
+            // Uncheck all manually just in case
+            form.querySelectorAll('input:checked').forEach(inp => inp.checked = false);
+            
+            updateCatalog(this.getAttribute('href'));
+        });
+    }
+});
+</script>
+{% endblock %}
+
